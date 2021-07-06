@@ -54,7 +54,7 @@ public class HomeController {
     public String processAddJobForm(@ModelAttribute @Valid Job newJob,
                                        Errors errors, Model model, @RequestParam int employerId, @RequestParam(required = false) List<Integer> skills) {
 
-        if (errors.hasErrors()) {
+        if (errors.hasErrors() || skills == null) {
             model.addAttribute("title", "Add Job");
             model.addAttribute("employers", employerRepository.findAll());
             model.addAttribute("skills", skillRepository.findAll());
@@ -64,11 +64,7 @@ public class HomeController {
         Optional<Employer> employerSelected = employerRepository.findById(employerId);
         newJob.setEmployer(employerSelected.get());
 
-        if (skills == null) {
-            model.addAttribute("employers", employerRepository.findAll());
-            model.addAttribute("skills", skillRepository.findAll());
-            return "add";
-        }
+
         List<Skill> skillObjs = (List<Skill>) skillRepository.findAllById(skills);
         newJob.setSkills(skillObjs);
         jobRepository.save(newJob);
